@@ -31,6 +31,33 @@ import { z } from "zod";
 // }),
 
 export const appRouter = createTRPCRouter({
+  getOriginalUrl: publicProcedure
+    .input(z.object({ hashUrl: z.string() }))
+    .query(async ({ ctx, input: { hashUrl } }) => {
+      const {
+        supabase
+      } = ctx
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const { data: unHashData, error: unHashError } = await supabase.rpc('unhash', {hash: hashUrl})
+
+      if (!unHashData || unHashError) return { error: unHashError?.message }
+
+      const unHashedIndex = parseInt((unHashData as string).replace(/[{}]/, ''), 10)
+
+      const { data, error } = await supabase
+        .from('shortened_urls')
+        .select('url_original')
+        .eq('url_hash', unHashedIndex)
+        .single()
+      
+      if (!data || error) return { error: error?.message }
+
+      return {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        originalUrl: data.url_original,
+      };
+    }),
   shortenUrl: publicProcedure
     .input(z.object({ originalUrl: z.string() }))
     .mutation(async ({ ctx, input: { originalUrl } }) => {
