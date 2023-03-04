@@ -1,9 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { BsLayoutSidebarInset } from 'react-icons/bs';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { api } from '~/utils/api';
 import MockNavigationButton from './mockNavigationButton';
 import MockWindowButton, { WindowButtonColour } from './mockWindowButton';
+import {AiOutlineLoading3Quarters} from 'react-icons/ai'
+import { MdOutlineContentCopy } from 'react-icons/md';
 
 type Props = {
   className?: string;
@@ -14,28 +16,36 @@ const InputBar = (props: Props) => {
     className
   } = props;
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const shortenUrl = api.shortenUrl.useMutation();
-  // const {data, refetch, error} = t
-  // const { data, error } = useQuery("comments", fetchComments, {
-  //   enabled: false
-  // });
+  const [urlInput, setUrlInput ] = useState('')
+  const [shortenedUrl, setShortenedUrl ] = useState('')
+  const [loading, setLoading ] = useState(false)
+  const [copied, setCopied ] = useState(false)
 
-  // console.log('hello', t)
-  // console.log('hello', error)
-  // console.log('hello', data)
+
+  const shortenUrl = api.shortenUrl.useMutation();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    if (shortenedUrl) {
+      await navigator.clipboard.writeText(shortenedUrl)
+      setCopied(true)
+      return
+    }
+
+    setLoading(true)
+
     const validity = e.currentTarget.checkValidity()
 
-    if (!validity || !inputRef.current?.value) return
+    if (!validity) {
+      setLoading(false)
+      return
+    }
 
-    const shortenedUrl = await shortenUrl.mutateAsync({ originalUrl: inputRef.current?.value });
+    const shortUrl = await shortenUrl.mutateAsync({ originalUrl: urlInput });
 
-    if (!inputRef.current) return
-
-    inputRef.current.value = `https://tro.hs.vs/${shortenedUrl.hashUrl as string}`;
+    setShortenedUrl(`tro.hs.vs/${shortUrl.hashUrl as string}`)
+    setLoading(false)
   };
 
   return (
@@ -54,28 +64,38 @@ const InputBar = (props: Props) => {
           <BsLayoutSidebarInset className="text-[#a7a6a7] text-lg" />
         </div>
         <form
-          className='grow flex justify-center items-center'
+          className='grow flex justify-center items-center relative'
           onSubmit={(e) => {
             onSubmit(e).catch((err) => console.error(err))
           }}
+          noValidate={!!shortenedUrl}
         >
           <input 
-            // initialValue="http://example.com"
-            className="peer grow h-9 rounded-full bg-white px-2 sm:px-8 focus:outline-none"
+            value={shortenedUrl ? `https:// ${shortenedUrl}` : urlInput}//shortenedUrl ? `https:// ${shortenedUrl}` : undefined}
+            onChange={(e) => { 
+              setUrlInput(e.target.value)
+              if (shortenedUrl) {
+                setUrlInput('')
+              }
+              setShortenedUrl('')
+              setCopied(false)
+            }}
+            className="peer grow h-9 rounded-full bg-white px-2 sm:px-8 focus:outline-none relative"
             placeholder="https://example.com?code=TG9sIHdoeSBkaWQgeW91IHNwZW5kIHRoZSB0aW1lIHRvIGRvIHRoaXM/"
-            pattern="(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})"
-            ref={inputRef}
+            pattern="^(?:(?:https?://)?(?:www\.)?)?[\w.-]+\.[a-zA-Z]{2,}(?:\/[\w\/]*)*$"
+            // ref={inputRef}
             required
           />
+          {shortenedUrl && <p className='absolute left-2 sm:left-8 inset-y-auto text-slate-400'>https://</p>}
           <button 
             className={`
               peer-focus:w-auto 
               peer-focus:px-4 
-              peer-focus:py-2 
+              peer-focus:h-9
               peer-focus:opacity-100 
               focus:w-auto 
               focus:px-4 
-              focus:py-2 
+              focus:h-9
               focus:opacity-100 
               w-0 
               p-0 
@@ -88,10 +108,16 @@ const InputBar = (props: Props) => {
               shrink 
               transition-all 
               overflow-hidden
+              ${
+                shortenedUrl && 'w-auto px-4 h-9 opacity-100 flex justify-center items-center gap-2'
+              }
             `}
             type="submit"
           >
-            Shorten!
+            {loading && <AiOutlineLoading3Quarters className="animate-spin" />}
+            {!loading && (shortenedUrl && <MdOutlineContentCopy className='text-xl' />)}
+            {!loading && !shortenedUrl && 'Shorten!'}
+            {!loading && shortenedUrl && (copied ? 'Copied!' : 'Copy to clipboard')}
           </button>
         </form>
       </div>

@@ -8,10 +8,6 @@ import { authOptions } from "./api/auth/[...nextauth]";
 const montserrat = Montserrat({ subsets: ['latin'] })
 
 const Home = ({ session }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  // const hello = api.shortenUrl.useQuery({ originalUrl: "from tRPC" });
-
-  // console.log(hello)
-
   return (
     <Layout 
       session={session}
@@ -37,7 +33,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerSession(context.req, context.res, authOptions);
   
   return {
-    props: { session: session },
+    props: { session },
   }
 }
 
