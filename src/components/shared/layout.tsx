@@ -1,4 +1,4 @@
-import { Session } from 'next-auth';
+import { type Session } from 'next-auth';
 import { Figtree } from 'next/font/google'
 import Head from 'next/head';
 import Navbar from "./navbar";

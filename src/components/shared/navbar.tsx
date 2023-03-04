@@ -1,9 +1,9 @@
 import { signIn, signOut } from 'next-auth/react';
-import { NextFont } from 'next/dist/compiled/@next/font';
+import { type NextFont } from 'next/dist/compiled/@next/font';
 import React, { useState } from 'react';
 import NavbarLink from '../home/navbarLink';
 import { FaGithub } from 'react-icons/fa'
-import { Session } from 'next-auth';
+import { type Session } from 'next-auth';
 import { BiMenu, BiMenuAltRight } from 'react-icons/bi'
 import Link from 'next/link';
 
@@ -38,7 +38,7 @@ const Navbar = ({
           <>
             <NavbarLink
               content="Log Out"
-              onClick={signOut}
+              onClick={() => {signOut().catch((err) => console.error(err))}}
               className="bg-transparent text-[#536c7b] hover:text-[#010202] transition-all px-2 py-1 sm:px-4 sm:py-2"
             />
             <NavbarLink
@@ -54,7 +54,7 @@ const Navbar = ({
               <FaGithub className="text-white text-2xl" />
               Login with Github
             </>}
-            onClick={() => signIn('github')}
+            onClick={() => {signIn('github').catch((err) => console.error(err))}}
           />
         )}
       </div>

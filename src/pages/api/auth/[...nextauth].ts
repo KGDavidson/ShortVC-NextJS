@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { SupabaseAdapter } from "@next-auth/supabase-adapter"
-import NextAuth, { AuthOptions, Session, User } from "next-auth"
+import NextAuth, { type AuthOptions, type User } from "next-auth"
 import GitHubProvider from "next-auth/providers/github";
 import jwt from "jsonwebtoken"
-import { JWT } from "next-auth/jwt"
+import { type JWT } from "next-auth/jwt"
+import { type AdapterUser } from "next-auth/adapters";
+import { type Session } from "next-auth/core/types";
 
 export const authOptions: AuthOptions = {
   // Configure one or more authentication providers
@@ -17,11 +20,14 @@ export const authOptions: AuthOptions = {
     secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
   }),
   callbacks: {
-    async session({ session, user }: { session: Session; user: User; token: JWT; }) {
+    // eslint-disable-next-line @typescript-eslint/require-await
+    async session({ session, user }: { session: Session; user: User | AdapterUser; token: JWT; }) {
       const signingSecret = process.env.SUPABASE_JWT_SECRET
+
       if (signingSecret) {
         const payload = {
           aud: "authenticated",
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           exp: Math.floor(new Date(session.expires).getTime() / 1000),
           sub: user.id,
           email: user.email,
@@ -33,7 +39,11 @@ export const authOptions: AuthOptions = {
           supabaseAccessToken: jwt.sign(payload, signingSecret)
         }
       }
-      return session
+      return {
+        ...session,
+        ...user,
+        text: "no secret"
+      }
     },
   },
 }

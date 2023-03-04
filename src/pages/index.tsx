@@ -1,10 +1,8 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType, type NextPage } from "next";
+import { type GetServerSidePropsContext, type InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth";
-import { getProviders } from "next-auth/react";
 import { Montserrat } from 'next/font/google'
 import InputBar from "~/components/home/inputBar";
 import Layout from "~/components/shared/layout";
-import { api } from "~/utils/api";
 import { authOptions } from "./api/auth/[...nextauth]";
 
 const montserrat = Montserrat({ subsets: ['latin'] })

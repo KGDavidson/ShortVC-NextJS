@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 
 type Props = {
   content: ReactNode;
@@ -19,7 +19,7 @@ const NavbarLink = (props: Props) => {
     <button
       type="button"
       onClick={onClick}
-      className={`px-4 py-2 rounded-lg font-medium ${className}`}
+      className={`px-4 py-2 rounded-lg font-medium ${className || ''}`}
     >
       {content}
     </button>
@@ -28,7 +28,7 @@ const NavbarLink = (props: Props) => {
   return (
     <a
       href={path}
-      className={`px-4 py-2 rounded-lg font-medium ${className}`}
+      className={`px-4 py-2 rounded-lg font-medium ${className || ''}`}
     >
       {content}
     </a>

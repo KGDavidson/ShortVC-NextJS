@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import React, { useRef } from 'react';
 import { BsLayoutSidebarInset } from 'react-icons/bs';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
@@ -30,17 +29,17 @@ const InputBar = (props: Props) => {
     e.preventDefault()
     const validity = e.currentTarget.checkValidity()
 
-    if (!validity) return
+    if (!validity || !inputRef.current?.value) return
 
-    const shortenedUrl = await shortenUrl.mutateAsync({ originalUrl: inputRef.current?.value! });
+    const shortenedUrl = await shortenUrl.mutateAsync({ originalUrl: inputRef.current?.value });
 
     if (!inputRef.current) return
 
-    inputRef.current.value = `https://tro.hs.vs/${shortenedUrl.hashUrl}`;
+    inputRef.current.value = `https://tro.hs.vs/${shortenedUrl.hashUrl as string}`;
   };
 
   return (
-    <div className={`bg-[#c7d1d7] h-14 rounded-xl flex justify-start items-center gap-6 px-4 sm:px-8 ${className}`}>
+    <div className={`bg-[#c7d1d7] h-14 rounded-xl flex justify-start items-center gap-6 px-4 sm:px-8 ${className || ''}`}>
       <div className="justify-center items-center gap-2 hidden sm:flex">
         <MockWindowButton colour={WindowButtonColour.Red} />
         <MockWindowButton colour={WindowButtonColour.Yellow} />
@@ -56,7 +55,9 @@ const InputBar = (props: Props) => {
         </div>
         <form
           className='grow flex justify-center items-center'
-          onSubmit={onSubmit}
+          onSubmit={(e) => {
+            onSubmit(e).catch((err) => console.error(err))
+          }}
         >
           <input 
             // initialValue="http://example.com"

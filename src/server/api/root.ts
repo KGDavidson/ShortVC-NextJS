@@ -1,11 +1,7 @@
 // -- (next_auth.uid() = user_id)
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { exampleRouter } from "~/server/api/routers/example";
 import { z } from "zod";
-import { createClient } from "@supabase/supabase-js";
-import { getServerSession } from "next-auth";
-import { authOptions } from "~/pages/api/auth/[...nextauth]";
 
 /**
  * This is the primary router for your server.
@@ -42,20 +38,27 @@ export const appRouter = createTRPCRouter({
       const {
         session,
         supabase
-      } = ctx as any
+      } = ctx
 
       const { data, error } = await supabase
         .from('shortened_urls')
         .insert({ 
           url_original: originalUrl, 
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           user_id: session ? session.id : undefined 
         })
         .select('*')
+
+      if (!data || error) return { error: error.message }
       
-      const { data: hashData, error: hashError } = await supabase.rpc('hash', {id: data[0].url_hash})
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const { data: hashData, error: hashError } = await supabase.rpc('hash', {id: data[0]?.url_hash})
+      
+      if (hashError) return { error: hashError?.message }
 
       return {
         originalUrl,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         hashUrl: hashData,
       };
     }),
