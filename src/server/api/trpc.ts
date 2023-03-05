@@ -17,9 +17,10 @@
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
-import { getServerSession } from "next-auth";
 import { authOptions } from "~/pages/api/auth/[...nextauth]";
 import { createClient } from "@supabase/supabase-js";
+import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -32,9 +33,7 @@ import { createClient } from "@supabase/supabase-js";
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
 const createInnerTRPCContext = async (_opts: CreateNextContextOptions) => {
-  const session = await getServerSession(_opts.req, _opts.res, authOptions)
-  
-  // if (!session) return {}
+  const session = await getServerSession(_opts.req, _opts.res, authOptions);
   
   const { supabaseAccessToken } = session || {}
 

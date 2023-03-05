@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // -- (next_auth.uid() = user_id)
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { z } from "zod";
+import { Session } from "next-auth";
 
 /**
  * This is the primary router for your server.
@@ -12,33 +14,76 @@ import { z } from "zod";
 
 // Now you can query with RLS enabled.
 
-
-// supabase 2afutZQyHl2kMnRt
-
-
-// add: t.procedure.input(validationSchema).mutation(({ input }) => {
-//   const id = Math.random()
-//     .toString(36)
-//     .replace(/[^a-z]+/g, '')
-//     .slice(0, 6);
-//   const item = {
-//     id,
-//     ...input,
-//   };
-//   items.push(item);
-
-//   return item;
-// }),
+const sessionZod = z.object({
+  supabaseAccessToken: z.string().optional(),
+  user: z.object({
+    id: z.string().optional().nullable(),
+    name: z.string().optional().nullable(),
+    email: z.string().optional().nullable(),
+    image: z.string().optional().nullable(),
+  }).optional().nullable(),
+  id: z.string().optional().nullable(),
+  name: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  image: z.string().optional().nullable(),
+  expires: z.string().optional().nullable(),
+}).nullable() 
 
 export const appRouter = createTRPCRouter({
+  updateUserShortenedUrl: publicProcedure
+    .input(z.object({ session: sessionZod, hashUrl: z.string(), newUrl: z.string() }))
+    .mutation(async ({ ctx: { supabase }, input: { session, hashUrl, newUrl } }) => {
+      const { data: unHashData, error: unHashError } = await supabase.rpc('unhash', {hash: hashUrl})
+
+      if (!unHashData || unHashError) return { error: unHashError?.message }
+
+      const { data, error } = await supabase
+        .from('shortened_urls')
+        .update({ url_original: newUrl })
+        .eq('url_hash', parseInt((unHashData as string).replace(/[{}]/, ''), 10))
+        .eq('user_id', session?.id)
+        
+      if (error) return { error: error?.message }
+
+      return {};
+    }),
+  deleteUserShortenedUrl: publicProcedure
+    .input(z.object({ session: sessionZod, hashUrl: z.string() }))
+    .mutation(async ({ ctx: { supabase }, input: { session, hashUrl } }) => {
+      const { data: unHashData, error: unHashError } = await supabase.rpc('unhash', {hash: hashUrl})
+
+      if (!unHashData || unHashError) return { error: unHashError?.message }
+
+      const { data, error } = await supabase
+        .from('shortened_urls')
+        .delete()
+        .eq('url_hash', parseInt((unHashData as string).replace(/[{}]/, ''), 10))
+        .eq('user_id', session?.id)
+      
+      if (error) return { error: error?.message }
+
+      return {};
+    }),
+  getUserShortenedUrls: publicProcedure
+    .input(z.object({ session: sessionZod }))
+    .query(async ({ ctx, input: { session } }) => {
+      const { supabase } = ctx
+
+      const { data: unHashData, error: unHashError } = await supabase.rpc('unhash', {hash: 'eJr'})
+
+      if (!unHashData || unHashError) return { error: unHashError?.message }
+
+      const { data, error } = await supabase.rpc('getuserurls', {uid: session?.id})
+      
+      if (!data || error) return { error: error?.message }
+
+      return {
+        shortenedUrls: data,
+      };
+    }),
   getOriginalUrl: publicProcedure
     .input(z.object({ hashUrl: z.string() }))
-    .query(async ({ ctx, input: { hashUrl } }) => {
-      const {
-        supabase
-      } = ctx
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    .query(async ({ ctx: { supabase }, input: { hashUrl } }) => {
       const { data: unHashData, error: unHashError } = await supabase.rpc('unhash', {hash: hashUrl})
 
       if (!unHashData || unHashError) return { error: unHashError?.message }
@@ -59,14 +104,8 @@ export const appRouter = createTRPCRouter({
       };
     }),
   shortenUrl: publicProcedure
-    .input(z.object({ originalUrl: z.string() }))
-    .mutation(async ({ ctx, input: { originalUrl } }) => {
-
-      const {
-        session,
-        supabase
-      } = ctx
-
+    .input(z.object({ session: sessionZod, originalUrl: z.string() }))
+    .mutation(async ({ ctx: { supabase }, input: { session, originalUrl } }) => {
       const { data, error } = await supabase
         .from('shortened_urls')
         .insert({ 
