@@ -1,22 +1,9 @@
-import { type GetServerSidePropsContext, type InferGetServerSidePropsType, NextPage } from "next";
-import { getServerSession } from "next-auth";
-import Head from "next/head";
-import Layout from "~/components/shared/layout";
+import { type GetServerSidePropsContext } from "next";
 import { client } from "~/utils/api";
-import { authOptions } from "./api/auth/[...nextauth]";
 
-const HashPage = ({ session }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  return (
-    <Layout session={session}>
-      <h2>Requested link not found</h2>
-    </Layout>
-  );
-};
-
+const HashPage = () => (null);
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSession(context.req, context.res, authOptions);
-
   if (!context.query.hash) {
     return {
       redirect: {
