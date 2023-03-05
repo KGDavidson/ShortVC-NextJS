@@ -33,7 +33,28 @@ const Navbar = ({
           onClick={() => setMenuOpen(!menuOpen)}
         />
       </div>
-      <div className={`flex justify-end sm:w-full px-8 sm:px-0 gap-2 sm:gap-4 items-center overflow-hidden absolute sm:static inset-x-0 top-full transition-all sm:max-h-10 sm:opacity-100 ${menuOpen ? 'max-h-10 opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className={`
+        flex 
+        justify-end 
+        py-2
+        sm:w-full 
+        px-8 
+        sm:px-0 
+        gap-2 
+        sm:gap-4 
+        items-center 
+        overflow-hidden 
+        absolute 
+        sm:static 
+        inset-x-0 
+        top-full 
+        transition-all 
+        sm:max-h-10
+        sm:opacity-100
+        bg-[#ebf0f3]
+        sm:z-10
+        ${menuOpen ? 'max-h-14 opacity-100 z-10' : 'max-h-0 opacity-0 -z-10'}
+      `}>
         {session ? (
           <>
             <NavbarLink
@@ -43,7 +64,7 @@ const Navbar = ({
             />
             <NavbarLink
               content="Dashboard"
-              path="/dahboard"
+              path="/dashboard"
               className="bg-[#536c7b] text-white hover:bg-[#3f5461] transition-all px-2 py-1 sm:px-4 sm:py-2"
             />
           </>
