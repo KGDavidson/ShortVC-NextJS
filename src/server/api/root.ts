@@ -37,12 +37,12 @@ export const appRouter = createTRPCRouter({
 
       if (!unHashData || unHashError) return { error: unHashError?.message }
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('shortened_urls')
         .update({ url_original: newUrl })
         .eq('url_hash', parseInt((unHashData as string).replace(/[{}]/, ''), 10))
         .eq('user_id', session?.id)
-        
+
       if (error) return { error: error?.message }
 
       return {};
@@ -54,7 +54,7 @@ export const appRouter = createTRPCRouter({
 
       if (!unHashData || unHashError) return { error: unHashError?.message }
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('shortened_urls')
         .delete()
         .eq('url_hash', parseInt((unHashData as string).replace(/[{}]/, ''), 10))
@@ -66,9 +66,7 @@ export const appRouter = createTRPCRouter({
     }),
   getUserShortenedUrls: publicProcedure
     .input(z.object({ session: sessionZod }))
-    .query(async ({ ctx, input: { session } }) => {
-      const { supabase } = ctx
-
+    .query(async ({ ctx: { supabase }, input: { session } }) => {
       const { data: unHashData, error: unHashError } = await supabase.rpc('unhash', {hash: 'eJr'})
 
       if (!unHashData || unHashError) return { error: unHashError?.message }

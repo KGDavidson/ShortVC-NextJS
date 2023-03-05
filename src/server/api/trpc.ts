@@ -19,7 +19,6 @@ import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { authOptions } from "~/pages/api/auth/[...nextauth]";
 import { createClient } from "@supabase/supabase-js";
-import { getSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 
 /**
@@ -32,25 +31,20 @@ import { getServerSession } from "next-auth";
  *
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
-const createInnerTRPCContext = async (_opts: CreateNextContextOptions) => {
-  const session = await getServerSession(_opts.req, _opts.res, authOptions);
-  
-  const { supabaseAccessToken } = session || {}
-
+const createInnerTRPCContext = () => {  
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || '',
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
     {
       global: {
         headers: {
-          Authorization: `Bearer ${supabaseAccessToken || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''}`,
         },
       },
     }
   )
 
   return {
-    session,
     supabase
   };
 };
@@ -61,8 +55,8 @@ const createInnerTRPCContext = async (_opts: CreateNextContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
-  return await createInnerTRPCContext(_opts);
+export const createTRPCContext = (_opts: CreateNextContextOptions) => {
+  return createInnerTRPCContext();
 };
 
 /**
