@@ -82,7 +82,7 @@ const UserUrl = (props: Props) => {
         <label className='hidden invisible sm:inline-block ml-2 text-[10px]'>{redirectUrl ? 'Save' : 'Delete'}</label>
         <button
           type='submit'
-          className={`w-full sm:w-24 py-0.5 flex justify-center mt-0.5 sm:mt-1 items-center transition-all rounded-lg text-slate-800 font-semibold ${redirectUrl ? 'bg-emerald-400' : 'bg-red-400'}`}
+          className={`w-full sm:w-24 py-0.5 flex justify-center mt-0.5 sm:mt-[0.3225rem] items-center transition-all rounded-lg text-slate-800 font-semibold ${redirectUrl ? 'bg-emerald-400' : 'bg-red-400'}`}
         >
           <Icon className={`inline-block mr-2 ${loading ? 'animate-spin' : ''}`} />
           {redirectUrl ? 'Save' : 'Delete'}
