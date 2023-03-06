@@ -11,7 +11,7 @@ const Home = ({ session }: InferGetServerSidePropsType<typeof getServerSideProps
   return (
     <Layout 
       session={session}
-      className="pt-24 sm:pt-16"
+      className="py-24 sm:py-16"
     >
       <h2 className={`${montserrat.className} text-5xl text-[#3e6179] font-semibold leading-snug`}>
         shorten

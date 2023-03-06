@@ -28,12 +28,13 @@ const Dashboard = ({ session, userShortenedUrls: initialShortenedUrls }: InferGe
 
   return (
     <Layout
-      className='flex flex-col gap-4'
+      className='flex flex-col gap-1 py-8 sm:py-12 '
       session={session}
     >
       <InputBar 
         session={session}
         onSubmitted={() => void refetchUserShortenedUrls()}
+        className='mb-3'
       />
       {(isLoading) && (
         <span className='flex items-center justify-center'>
@@ -58,6 +59,16 @@ const Dashboard = ({ session, userShortenedUrls: initialShortenedUrls }: InferGe
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (!session) {
+    return {
+      redirect: {
+        source: context.resolvedUrl,
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
 
   const userShortenedUrls: {
     shortenedUrls?: ShortenedUrl[]

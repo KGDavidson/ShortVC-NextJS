@@ -17,9 +17,7 @@
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
-import { authOptions } from "~/pages/api/auth/[...nextauth]";
 import { createClient } from "@supabase/supabase-js";
-import { getServerSession } from "next-auth";
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export

@@ -115,7 +115,7 @@ const InputBar = (props: Props) => {
               transition-all 
               overflow-hidden
               ${
-                shortenedUrl && 'w-auto px-3 sm:px-4 h-9 opacity-100 flex justify-evenly sm:justify-center items-center gap-2'
+                shortenedUrl && 'w-auto px-3 ml-2 sm:px-2 h-9 opacity-100 flex justify-evenly sm:justify-center items-center gap-2'
               }
             `}
             type="submit"

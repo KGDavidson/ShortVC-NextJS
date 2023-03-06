@@ -20,7 +20,7 @@ export default function Layout({ children, className, session }: Props) {
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Navbar font={figtree} session={session} />
-      <main className={`px-8 sm:px-12 relative pt-20 sm:pt-12 ${className || ''}`}>{children}</main>
+      <main className={`px-8 sm:px-12 relative ${className || ''}`}>{children}</main>
     </>
   )
 }

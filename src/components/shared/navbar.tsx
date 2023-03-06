@@ -1,6 +1,6 @@
 import { signIn, signOut } from 'next-auth/react';
 import { type NextFont } from 'next/dist/compiled/@next/font';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavbarLink from '../home/navbarLink';
 import { FaGithub } from 'react-icons/fa'
 import { type Session } from 'next-auth';
@@ -17,11 +17,16 @@ const Navbar = ({
   session
 }: Props) => {
   const [menuOpen, setMenuOpen ] = useState(false)
+  const [headerAnimated, setHeaderAnimated ] = useState(true)
 
   const MenuIcon = menuOpen ? BiMenuAltRight : BiMenu
 
+  useEffect(() => {
+    if (sessionStorage.getItem('headerAnimated') !== 'true') setHeaderAnimated(false)
+  }, [])
+
   return (
-    <nav className="px-8 sm:px-12 pt-8 pb-2 sm:py-8 w-full flex gap-4 justify-center items-start flex-col relative sm:flex-row">
+    <nav className="bg-[#ebf0f3] px-8 sm:px-12 pt-8 pb-2 sm:py-8 w-full flex gap-4 justify-center items-start flex-col relative sm:flex-row">
       <div className='flex justify-between items-center w-full'>
         <Link href="/">
           <h1 className={`${font.className} text-[#ff0039] font-bold text-4xl`}>
@@ -53,6 +58,8 @@ const Navbar = ({
         sm:opacity-100
         bg-[#ebf0f3]
         sm:z-10
+        shadow-lg
+        sm:shadow-none
         ${menuOpen ? 'max-h-14 opacity-100 z-10' : 'max-h-0 opacity-0 -z-10'}
       `}>
         {session ? (
