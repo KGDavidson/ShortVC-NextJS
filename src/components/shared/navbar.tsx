@@ -17,21 +17,37 @@ const Navbar = ({
   session
 }: Props) => {
   const [menuOpen, setMenuOpen ] = useState(false)
-  const [headerAnimated, setHeaderAnimated ] = useState(true)
+  const [headerAnimated, setHeaderAnimated ] = useState<boolean>()
 
   const MenuIcon = menuOpen ? BiMenuAltRight : BiMenu
 
   useEffect(() => {
-    if (sessionStorage.getItem('headerAnimated') !== 'true') setHeaderAnimated(false)
+    if (sessionStorage.getItem('headerAnimated') !== 'true') {
+      setHeaderAnimated(false)
+      sessionStorage.setItem('headerAnimated', 'true')
+      return
+    }
+
+    setHeaderAnimated(true)
   }, [])
 
   return (
     <nav className="bg-[#ebf0f3] px-8 sm:px-12 pt-8 pb-2 sm:py-8 w-full flex gap-4 justify-center items-start flex-col relative sm:flex-row">
       <div className='flex justify-between items-center w-full'>
         <Link href="/">
-          <h1 className={`${font.className} text-[#ff0039] font-bold text-4xl`}>
-            tro.hs.vc
-          </h1>
+          {headerAnimated !== undefined && (
+            <h1 className={`${font.className} text-[#ff0039] font-bold text-4xl`}>
+            <span className='group inline-flex'>
+              <span className={`block ${headerAnimated ? '' : 'animate-move-t transition-all'}`}>t</span>
+              <span className={`block ${headerAnimated ? '' : 'animate-move-r transition-all'}`}>r</span>
+              <span className={`block ${headerAnimated ? '' : 'animate-move-o transition-all'}`}>o</span>
+              <span className={`block ${headerAnimated ? '' : 'animate-move-dot transition-all'}`}>.</span>
+              <span className={`block ${headerAnimated ? '' : 'animate-move-h transition-all'}`}>h</span>
+              <span className={`block ${headerAnimated ? '' : 'animate-move-s transition-all'}`}>s</span>
+            </span>
+            .vc
+            </h1>
+          )}
         </Link>
         <MenuIcon 
           className={`text-4xl text-[#536c7b] sm:hidden`} 
