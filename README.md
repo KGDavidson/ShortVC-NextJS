@@ -1,4 +1,4 @@
-# Recipisio
+# ShortVC
 
 A mobile-responsive url shortening management service with OAuth, built with NextJS and the T3 stack 
 
