@@ -33,7 +33,7 @@ Clone this repo to your desktop and run `yarn` in the root directory to install 
 
 Once the dependencies are installed, you can run `yarn run dev` in the root directory to start the application.
 
-You will then be able to access it at localhost:8000
+You will then be able to access it at localhost:3000
 
 ---
 
