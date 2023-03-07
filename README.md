@@ -2,7 +2,7 @@
 
 A mobile-responsive url shortening management service with OAuth, built with NextJS and the T3 stack 
 
-![UI](https://i.postimg.cc/KzKr2Mdz/ezgif-com-optimize-1.gif)
+![UI](https://i.postimg.cc/tCbShBKN/ezgif-com-optimize-1-1.gif)
 
 ---
 
