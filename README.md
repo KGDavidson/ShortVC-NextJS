@@ -19,7 +19,7 @@ A mobile-responsive url shortening management service with OAuth, built with Nex
 
 ## Live
 
--   Live site at http://tro.hs.vc
+-   ~~Live site at http://tro.hs.vc~~
 
 ---
 
@@ -45,7 +45,7 @@ You will then be able to access it at localhost:3000
 
 ## License
 
-> You can check out the full license [here](LICENSE)
+> You can check out the full license [here](LICENSE.md)
 
 This project is licensed under the terms of the **MIT** license.
 
